@@ -6,6 +6,11 @@
     <title>Our Photobooth 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+<base target="_blank">
 </head>
 <body>
     <!-- Floating Hearts Background -->
@@ -25,22 +30,36 @@
     </header>
 
     <div class="main-container">
+        <!-- Camera Mode Toggle -->
+        <div class="mode-toggle-section">
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="dualModeBtn" onclick="setCameraMode('dual')">
+                    <span>👥</span> Dual Camera
+                </button>
+                <button class="mode-btn" id="singleModeBtn" onclick="setCameraMode('single')">
+                    <span>👤</span> Single Camera
+                </button>
+            </div>
+            <p class="mode-hint" id="modeHint">Perfect for two webcams or when you're together</p>
+        </div>
+
         <!-- Camera Section -->
         <div class="camera-section">
-            <div class="camera-labels">
+            <div class="camera-labels" id="cameraLabels">
                 <div class="camera-label pink">
                     <div class="avatar">👤</div>
                     <span>You</span>
                 </div>
-                <div class="camera-label blue">
+                <div class="camera-label blue" id="camera2Label">
                     <div class="avatar">👤</div>
                     <span>Your Love</span>
                 </div>
             </div>
 
-            <div class="dual-camera">
+            <div class="dual-camera" id="dualCamera">
                 <div class="camera-feed" id="camera1">
                     <video id="video1" autoplay playsinline muted></video>
+                    <canvas id="threeCanvas1" class="three-canvas"></canvas>
                     <div class="placeholder" id="placeholder1">
                         <div class="icon">📷</div>
                         <p>Camera 1</p>
@@ -53,6 +72,7 @@
                 </div>
                 <div class="camera-feed" id="camera2">
                     <video id="video2" autoplay playsinline muted></video>
+                    <canvas id="threeCanvas2" class="three-canvas"></canvas>
                     <div class="placeholder" id="placeholder2">
                         <div class="icon">📷</div>
                         <p>Camera 2</p>
@@ -62,6 +82,47 @@
                         <div class="countdown-number" id="countNum2">3</div>
                     </div>
                     <div class="flash-overlay" id="flash2"></div>
+                </div>
+            </div>
+
+            <!-- Face Filter Controls -->
+            <div class="face-filters-section">
+                <div class="section-title">
+                    <span>🎭</span> AR Face Filters
+                </div>
+                <div class="face-filter-options" id="faceFilterOptions">
+                    <div class="face-filter-option selected" data-filter="none" onclick="selectFaceFilter('none')">
+                        <div class="face-filter-preview">✨</div>
+                        <div class="face-filter-name">None</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="sunglasses" onclick="selectFaceFilter('sunglasses')">
+                        <div class="face-filter-preview">😎</div>
+                        <div class="face-filter-name">Sunglasses</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="dog" onclick="selectFaceFilter('dog')">
+                        <div class="face-filter-preview">🐶</div>
+                        <div class="face-filter-name">Dog</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="crown" onclick="selectFaceFilter('crown')">
+                        <div class="face-filter-preview">👑</div>
+                        <div class="face-filter-name">Crown</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="hearts" onclick="selectFaceFilter('hearts')">
+                        <div class="face-filter-preview">💕</div>
+                        <div class="face-filter-name">Hearts</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="cat" onclick="selectFaceFilter('cat')">
+                        <div class="face-filter-preview">😺</div>
+                        <div class="face-filter-name">Cat</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="glasses3d" onclick="selectFaceFilter('glasses3d')">
+                        <div class="face-filter-preview">🤓</div>
+                        <div class="face-filter-name">3D Glasses</div>
+                    </div>
+                    <div class="face-filter-option" data-filter="bunny" onclick="selectFaceFilter('bunny')">
+                        <div class="face-filter-preview">🐰</div>
+                        <div class="face-filter-name">Bunny</div>
+                    </div>
                 </div>
             </div>
 
