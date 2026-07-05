@@ -105,6 +105,208 @@ body {
     z-index: 1;
 }
 
+/* Room Section */
+.room-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 40px 20px;
+}
+
+.room-card {
+    background: white;
+    border-radius: 32px;
+    padding: 50px 40px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+}
+
+.room-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.room-card h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+}
+
+.room-card p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+.room-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btn-large {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    justify-content: center;
+}
+
+.room-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.room-divider::before,
+.room-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.join-room {
+    display: flex;
+    gap: 10px;
+}
+
+.join-room input {
+    flex: 1;
+    padding: 12px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+.join-room input:focus {
+    border-color: var(--soft-pink);
+}
+
+.join-room input::placeholder {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    color: #ccc;
+}
+
+/* Connected Room */
+.connected-room {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.room-info-bar {
+    background: white;
+    border-radius: 16px;
+    padding: 15px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.room-code-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.room-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 300;
+}
+
+.room-code {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--soft-pink);
+    letter-spacing: 2px;
+}
+
+.copy-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.copy-btn:hover {
+    transform: scale(1.1);
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    transition: background 0.3s;
+}
+
+.status-dot.connected {
+    background: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+
+.status-dot.connecting {
+    background: #FFC107;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.btn-leave {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: #ffebee;
+    color: #e53935;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-leave:hover {
+    background: #e53935;
+    color: white;
+}
+
 /* Camera Section */
 .camera-section {
     background: white;
@@ -157,14 +359,16 @@ body {
     aspect-ratio: 4/3;
 }
 
+/* Mirror camera feeds */
 .camera-feed video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transform: scaleX(-1); /* Mirror horizontally */
 }
 
-/* Three.js overlay canvas */
+/* Mirror Three.js canvas overlay too */
 .three-canvas {
     position: absolute;
     top: 0;
@@ -173,6 +377,7 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 5;
+    transform: scaleX(-1); /* Mirror to match video */
 }
 
 .camera-feed .placeholder {
@@ -188,6 +393,7 @@ body {
     color: var(--text-light);
     gap: 10px;
     z-index: 10;
+    background: #f5f5f5;
 }
 
 .camera-feed .placeholder .icon {
@@ -197,24 +403,6 @@ body {
 
 .camera-feed .placeholder p {
     font-size: 0.85rem;
-}
-
-.camera-feed .placeholder button {
-    margin-top: 5px;
-    padding: 8px 20px;
-    border: none;
-    border-radius: 20px;
-    background: var(--soft-pink);
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.camera-feed .placeholder button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255,182,193,0.4);
 }
 
 /* Countdown Overlay */
@@ -793,6 +981,9 @@ body {
     .frame-options { grid-template-columns: repeat(3, 1fr); }
     .face-filter-options { gap: 8px; }
     .face-filter-option .face-filter-preview { width: 60px; height: 60px; font-size: 1.5rem; }
+    .room-card { padding: 35px 25px; }
+    .join-room { flex-direction: column; }
+    .room-info-bar { flex-direction: column; text-align: center; }
 }
 
 /* Hidden canvas for processing */
@@ -820,77 +1011,4 @@ body {
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
-}
-
-/* Mode Toggle Section */
-.mode-toggle-section {
-    background: white;
-    border-radius: 24px;
-    padding: 20px 25px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.mode-toggle {
-    display: inline-flex;
-    background: #f0f0f0;
-    border-radius: 30px;
-    padding: 4px;
-    gap: 4px;
-}
-
-.mode-btn {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 26px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: transparent;
-    color: var(--text-light);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.mode-btn.active {
-    background: white;
-    color: var(--soft-pink);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.mode-btn:hover:not(.active) {
-    color: var(--text-dark);
-}
-
-.mode-hint {
-    margin-top: 10px;
-    font-size: 0.8rem;
-    color: var(--text-light);
-    font-weight: 300;
-}
-
-/* Single camera mode */
-.single-camera .dual-camera {
-    justify-content: center;
-}
-
-.single-camera .camera-feed {
-    max-width: 600px;
-    width: 100%;
-}
-
-.single-camera #camera2 {
-    display: none;
-}
-
-.single-camera #camera2Label {
-    display: none;
-}
-
-.single-camera .camera-labels {
-    justify-content: center;
 }
