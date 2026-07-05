@@ -650,39 +650,53 @@ async function capturePhoto() {
     const partnerVideo = document.getElementById('partnerVideo');
     const threeCanvas = document.getElementById('threeCanvas1');
 
-    const width = 800;
+    // Use 4:3 aspect ratio for each half, so total is wider
+    // Each half: 400x300 (4:3), total: 800x300
+    const halfWidth = 400;
     const height = 300;
-    canvas.width = width;
+    const totalWidth = halfWidth * 2;
+
+    canvas.width = totalWidth;
     canvas.height = height;
 
     ctx.fillStyle = '#f0f0f0';
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, totalWidth, height);
 
-    // Draw my video (left half)
+    // Draw my video (left half) — mirror it back since video is mirrored for display
     if (myVideo.readyState >= 2) {
-        ctx.drawImage(myVideo, 0, 0, width / 2, height);
+        ctx.save();
+        ctx.translate(halfWidth, 0);
+        ctx.scale(-1, 1); // Un-mirror for natural photo
+        ctx.drawImage(myVideo, 0, 0, halfWidth, height);
+        ctx.restore();
+
+        // Draw Three.js overlay (also un-mirror)
         if (selectedFaceFilter !== 'none' && threeCanvas) {
-            ctx.drawImage(threeCanvas, 0, 0, width / 2, height);
+            ctx.save();
+            ctx.translate(halfWidth, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(threeCanvas, 0, 0, halfWidth, height);
+            ctx.restore();
         }
     } else {
         ctx.fillStyle = '#e0e0e0';
-        ctx.fillRect(0, 0, width / 2, height);
+        ctx.fillRect(0, 0, halfWidth, height);
     }
 
-    // Draw partner video (right half)
+    // Draw partner video (right half) — partner's video is already correct orientation
     if (partnerVideo.readyState >= 2) {
-        ctx.drawImage(partnerVideo, width / 2, 0, width / 2, height);
+        ctx.drawImage(partnerVideo, halfWidth, 0, halfWidth, height);
     } else {
         ctx.fillStyle = '#e0e0e0';
-        ctx.fillRect(width / 2, 0, width / 2, height);
+        ctx.fillRect(halfWidth, 0, halfWidth, height);
     }
 
-    // Divider
+    // Divider line
     ctx.strokeStyle = 'rgba(255,255,255,0.5)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
+    ctx.moveTo(halfWidth, 0);
+    ctx.lineTo(halfWidth, height);
     ctx.stroke();
 
     applyCanvasFilter(ctx, canvas);
@@ -818,11 +832,13 @@ async function downloadStrip() {
     const canvas = document.getElementById('processCanvas');
     const ctx = canvas.getContext('2d');
 
-    const stripWidth = 600;
-    const photoHeight = 200;
-    const padding = 30;
-    const footerHeight = 80;
-    const stripHeight = padding * 2 + photoHeight * 4 + 30 + footerHeight;
+    // Each photo is 4:3 ratio: 270x203 (half of 540 wide strip)
+    const stripWidth = 540;
+    const photoHeight = 203; // 270 * 3/4 = 202.5
+    const padding = 25;
+    const footerHeight = 70;
+    const gap = 10;
+    const stripHeight = padding * 2 + photoHeight * 4 + gap * 3 + footerHeight;
 
     canvas.width = stripWidth;
     canvas.height = stripHeight;
@@ -847,7 +863,6 @@ async function downloadStrip() {
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
     const photoWidth = stripWidth - padding * 2;
-    const gap = 10;
 
     for (let i = 0; i < 4; i++) {
         const y = padding + i * (photoHeight + gap);
@@ -855,7 +870,12 @@ async function downloadStrip() {
             const img = new Image();
             img.src = photos[i];
             await new Promise(resolve => {
-                img.onload = () => { ctx.drawImage(img, padding, y, photoWidth, photoHeight); resolve(); };
+                img.onload = () => { 
+                    // Draw the full 800x300 captured image, scaled to fit strip width
+                    // The captured image has both halves side by side
+                    ctx.drawImage(img, 0, 0, img.width, img.height, padding, y, photoWidth, photoHeight);
+                    resolve(); 
+                };
                 img.onerror = resolve;
             });
         } else {
@@ -867,7 +887,7 @@ async function downloadStrip() {
         ctx.strokeRect(padding, y, photoWidth, photoHeight);
     }
 
-    const footerY = padding + 4 * (photoHeight + gap) + 10;
+    const footerY = padding + 4 * (photoHeight + gap) + 5;
     const isDark = ['dark', 'stars'].includes(selectedFrame);
     ctx.fillStyle = isDark ? '#fff' : '#888';
     ctx.font = '300 14px Poppins, sans-serif';

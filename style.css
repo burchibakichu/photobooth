@@ -359,26 +359,24 @@ body {
     aspect-ratio: 4/3;
 }
 
-/* Mirror camera feeds */
-.camera-feed video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transform: scaleX(-1); /* Mirror horizontally */
-}
-
-/* Mirror Three.js canvas overlay too */
-.three-canvas {
+/* Mirror only the video/canvas content, NOT the UI overlays */
+.camera-feed .video-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 5;
-    transform: scaleX(-1); /* Mirror to match video */
+    transform: scaleX(-1);
 }
+
+/* Un-flip UI elements so they appear normal */
+.camera-feed .placeholder,
+.camera-feed .countdown-overlay,
+.camera-feed .flash-overlay {
+    transform: scaleX(-1);
+}
+
+
 
 .camera-feed .placeholder {
     position: absolute;
@@ -971,6 +969,60 @@ body {
 
 .footer .heart {
     color: var(--soft-pink);
+}
+
+
+/* Mirror wrapper for local camera */
+.video-mirror-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(-1);
+}
+
+.video-mirror-wrapper video,
+.video-mirror-wrapper .three-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Normal wrapper for partner camera */
+.video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-wrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Remove old video styles that conflict */
+.camera-feed video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Three.js canvas inside mirror wrapper */
+.video-mirror-wrapper .three-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
 }
 
 /* Responsive */
